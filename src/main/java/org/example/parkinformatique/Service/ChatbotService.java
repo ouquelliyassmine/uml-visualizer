@@ -19,10 +19,10 @@ public class ChatbotService {
         List<KbEmbedding> all = embeddingService.getAllEmbeddings();
         return all.stream()
                 .peek(e -> {
+
                     if (e.getEmbedding() == null && e.getEmbeddingJson() != null) {
                         e.setEmbedding(objectMapper.convertValue(
-                                e.getEmbeddingJson(),
-                                new com.fasterxml.jackson.core.type.TypeReference<java.util.List<Double>>() {}
+                                e.getEmbeddingJson(), new TypeReference<List<Double>>() {}
                         ));
                     }
                 })

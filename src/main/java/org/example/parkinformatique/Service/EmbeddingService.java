@@ -11,9 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -25,21 +24,28 @@ public class EmbeddingService {
     @Value("${rag.ollama.base-url:http://localhost:11434}")
     private String baseUrl;
 
+
     @Value("${rag.ollama.embedding-model:nomic-embed-text}")
     private String embeddingModel;
 
     private WebClient client;
 
     private WebClient client() {
-        if (client == null) client = WebClient.builder().baseUrl(baseUrl).build();
+        if (client == null) {
+            client = WebClient.builder()
+                    .baseUrl(baseUrl)
+                    .codecs(c -> c.defaultCodecs().maxInMemorySize(8 * 1024 * 1024))
+                    .build();
+        }
         return client;
     }
 
-    /** Call Ollama embedding endpoint */
+
     public List<Double> embed(String text) throws Exception {
         JsonNode req = mapper.createObjectNode()
                 .put("model", embeddingModel)
-                .put("prompt", text);
+                .put("input", text)
+                .put("keep_alive", "1h");
 
         String resp = client().post()
                 .uri("/api/embeddings")
@@ -47,11 +53,11 @@ public class EmbeddingService {
                 .body(BodyInserters.fromValue(mapper.writeValueAsString(req)))
                 .retrieve()
                 .bodyToMono(String.class)
-                .block();
+                .block(Duration.ofSeconds(60));
 
         JsonNode node = mapper.readTree(resp);
         JsonNode arr = node.get("embedding");
-        List<Double> vec = new ArrayList<>();
+        List<Double> vec = new ArrayList<>(arr.size());
         arr.forEach(x -> vec.add(x.asDouble()));
         return vec;
     }
@@ -61,7 +67,6 @@ public class EmbeddingService {
         return kbRepo.findAll();
     }
 
-    /** Utility to (de)serialize embedding vectors */
     public static String toJson(List<Double> v, ObjectMapper mapper) throws Exception {
         return mapper.writeValueAsString(v);
     }

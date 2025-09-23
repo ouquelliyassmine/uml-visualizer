@@ -58,10 +58,9 @@ public class KbAdminController {
                 auteur = userRepo.findFirstByRoleIgnoreCase("ADMIN").orElse(null);
             }
 
-            // إذا العمود في DB nullable=false، خاص المؤلف يكون ضروري
             if (auteur == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Auteur requis: زِد 'auteurEmail' أو 'auteurId' لكل مقال");
+                        "Auteur requis: زِد 'auteurEmail' أو 'auteurId' ");
             }
 
             a.setAuteur(auteur);

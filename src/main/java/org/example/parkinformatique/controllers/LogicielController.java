@@ -32,25 +32,25 @@ public class LogicielController {
     }
 
     /* ---------- GET ---------- */
-    // GET /api/logiciels            -> كلشي
+    // GET /api/logiciels
     @GetMapping
     public List<LogicielResponse> listAll() {
         return service.listAll();
     }
 
-    // GET /api/logiciels?id=8       -> واحد بالـid (query)
+    // GET /api/logiciels?id=8       ->id (query)
     @GetMapping(params = "id")
     public ResponseEntity<LogicielResponse> getByQuery(@RequestParam Long id) {
         return ResponseEntity.ok(service.get(id));
     }
 
-    // GET /api/logiciels/{id}       -> واحد بالـid (path)
+    // GET /api/logiciels/{id}       -> id (path)
     @GetMapping("/{id}")
     public ResponseEntity<LogicielResponse> get(@PathVariable Long id) {
         return ResponseEntity.ok(service.get(id));
     }
 
-    // GET /api/logiciels?materielId=1     -> بالـmaterielId (query)
+    // GET /api/logiciels?materielId=1     -> materielId (query)
     @GetMapping(params = "materielId")
     public List<LogicielResponse> byMaterielQuery(@RequestParam Long materielId) {
         return service.listByMateriel(materielId);

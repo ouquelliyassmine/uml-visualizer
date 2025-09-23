@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.parkinformatique.entities.Utilisateur;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,24 +19,34 @@ public class Ticket {
 
     private String titre;
     private String description;
-    private String statut;
-    private String priorite;
+    private String statut;    // OUVERT, EN_COURS, RESOLU, CLOTURE
+    private String priorite;  // BASSE, MOYENNE, HAUTE
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "date_creation", updatable = false, nullable = false)
+    @CreationTimestamp
     private LocalDateTime dateCreation;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "date_cloture")
     private LocalDateTime dateCloture;
 
     private String commentaire;
 
+    // utilisateur qui a créé le ticket
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 
+    // technicien assigné
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "technicien_id")
+    private Utilisateur assignedTo;
+
     public Ticket() {}
 
-    public Ticket(String titre, String description, String statut, String priorite, LocalDateTime dateCreation, Utilisateur utilisateur) {
+    public Ticket(String titre, String description, String statut, String priorite,
+                  LocalDateTime dateCreation, Utilisateur utilisateur) {
         this.titre = titre;
         this.description = description;
         this.statut = statut;

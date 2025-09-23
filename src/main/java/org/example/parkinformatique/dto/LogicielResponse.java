@@ -11,10 +11,10 @@ public class LogicielResponse {
     private String dateExpiration;
     private Long materielId;
 
-    // 👇 أضف هذا الحقل لأنه هو اللي كتعرضه الواجهة
+
     private String materielNom;
 
-    // (اختياري) خليهوم إذا كنت كترجعهم من قبل
+
     private String materielType;
     private String materielMarque;
     private String materielModele;

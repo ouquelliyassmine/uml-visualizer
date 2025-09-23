@@ -14,12 +14,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+
+
+
 @Getter
 @Setter
 @Entity
 @Table(name = "utilisateur")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonIgnoreProperties({"tickets"})  // لمنع serialization لعلاقة التذاكر لتجنب الحلقات
+@JsonIgnoreProperties({"tickets"})
 public class Utilisateur implements UserDetails {
 
     @Id
@@ -31,7 +34,7 @@ public class Utilisateur implements UserDetails {
     private String email;
     private String telephone;
 
-    @JsonIgnore // لا ترجع كلمة السر في الـ JSON
+    @JsonIgnore
     private String password;
 
     private String role;

@@ -41,7 +41,7 @@ public class ChatbotIndexerService {
                 List<Double> vec = embeddingService.embed(text);
                 KbEmbedding e = new KbEmbedding();
                 e.setArticle(a);
-                e.setChunkIndex(i);                             // 👈 هنا
+                e.setChunkIndex(i);
                 e.setChunkText(text);
                 e.setEmbeddingJson(mapper.valueToTree(vec));
                 embRepo.save(e);

@@ -16,7 +16,7 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    // ✅ NEW: لائحة المستخدمين (بدون password)
+
     @GetMapping("/users")
     public List<UtilisateurDto> listUsers() {
         return adminService.getAllUsers().stream()
@@ -24,7 +24,7 @@ public class AdminController {
                 .collect(Collectors.toList());
     }
 
-    // ✅ NEW: مستخدم واحد بالـID
+
     @GetMapping("/users/{id}")
     public ResponseEntity<UtilisateurDto> getUser(@PathVariable Long id) {
         return adminService.getUserById(id)
@@ -47,9 +47,8 @@ public class AdminController {
         adminService.deleteUser(id);
     }
 
-    // ... باقي المسارات ديالك (materiels, logiciels, fournisseurs, ...)
 
-    // ---- DTO بسيط بلا password ----
+
     public static class UtilisateurDto {
         public Long id;
         public String nom;

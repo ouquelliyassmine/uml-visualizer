@@ -34,5 +34,5 @@ public class KbEmbedding {
     private Integer chunkIndex;
 
     @Transient
-    private java.util.List<Double> embedding; // نملؤها في الخدمة
+    private java.util.List<Double> embedding;
 }

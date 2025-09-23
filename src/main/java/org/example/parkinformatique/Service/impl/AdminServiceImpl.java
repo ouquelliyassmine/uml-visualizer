@@ -1,5 +1,6 @@
-package org.example.parkinformatique.Service;
+package org.example.parkinformatique.Service.impl;
 
+import org.example.parkinformatique.Service.AdminService;
 import org.example.parkinformatique.entities.Utilisateur;
 import org.example.parkinformatique.repositories.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Utilisateur createUser(Utilisateur utilisateur) {
-        // TODO: إلا بغيتِ hashing للباسوورد ديريه هنا قبل save
+
         return utilisateurRepository.save(utilisateur);
     }
 
@@ -28,7 +29,7 @@ public class AdminServiceImpl implements AdminService {
             existing.setEmail(utilisateur.getEmail());
             existing.setTelephone(utilisateur.getTelephone());
             if (utilisateur.getRole() != null) existing.setRole(utilisateur.getRole());
-            // إذا بغيتِ تغيّري password هنا كذلك (مع encoder)
+
             return utilisateurRepository.save(existing);
         }).orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable: " + id));
     }
@@ -49,5 +50,5 @@ public class AdminServiceImpl implements AdminService {
         return utilisateurRepository.findById(id);
     }
 
-    // ... باقي الميثودز ديالك
+
 }

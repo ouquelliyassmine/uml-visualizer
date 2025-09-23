@@ -11,9 +11,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/utilisateur")
@@ -27,7 +28,9 @@ public class UtilisateurController {
     public ResponseEntity<?> declareIncident(
             @RequestBody TicketCreationRequest request,
             @AuthenticationPrincipal UserDetails userDetails,
-            HttpServletRequest httpRequest) {
+            HttpServletRequest httpRequest)
+
+    {
 
         // DEBUG cookies reçus
         System.out.println("📦 Cookies reçus par Spring Boot:");
@@ -53,7 +56,6 @@ public class UtilisateurController {
         newTicket.setStatut(request.getStatut() != null ? request.getStatut() : "OUVERT");
         newTicket.setPriorite(request.getPriorite() != null ? request.getPriorite() : "MOYENNE");
         newTicket.setCommentaire(request.getCommentaire());
-        newTicket.setDateCreation(LocalDate.now().atStartOfDay());
         newTicket.setUtilisateur(utilisateur);
 
         utilisateurService.declareIncidentOrRequest(newTicket);
@@ -104,14 +106,14 @@ public class UtilisateurController {
     public BaseConnaissance readArticle(@PathVariable Long articleId) {
         return utilisateurService.readArticle(articleId);
     }
-    // شكون داخل فعلا؟ (الإيميل القادم من JWT)
+
     @GetMapping("/whoami")
     public Object whoAmI(@AuthenticationPrincipal UserDetails userDetails) {
         String email = (userDetails != null) ? userDetails.getUsername() : null;
         return java.util.Map.of("emailFromJWT", email);
     }
 
-    // ديبَغ: واش قدّينا ن resolve-يو اليوزر ونجيبو matériel ديالو؟
+
     @GetMapping("/materiels/debug")
     public Object debugMateriels(@AuthenticationPrincipal UserDetails userDetails) {
         String email = (userDetails != null) ? userDetails.getUsername() : null;

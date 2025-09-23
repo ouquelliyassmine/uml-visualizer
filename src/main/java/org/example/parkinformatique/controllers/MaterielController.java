@@ -2,11 +2,10 @@ package org.example.parkinformatique.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.parkinformatique.dto.MaterielCreateUpdateDTO;
-import org.example.parkinformatique.dto.MaterielDTO;
+import org.example.parkinformatique.mappers.MaterielMapper;
 import org.example.parkinformatique.entities.Fournisseur;
 import org.example.parkinformatique.entities.Materiel;
 import org.example.parkinformatique.entities.Utilisateur;
-import org.example.parkinformatique.mappers.MaterielMapper;
 import org.example.parkinformatique.repositories.FournisseurRepository;
 import org.example.parkinformatique.repositories.MaterielRepository;
 import org.example.parkinformatique.repositories.UtilisateurRepository;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/materiels")
@@ -26,6 +24,25 @@ public class MaterielController {
     private final UtilisateurRepository utilisateurRepository;
     private final FournisseurRepository fournisseurRepository;
 
+
+    public record MaterielEtatDTO(String etat) {}
+    public record MaterielOptionDTO(Long id, String label, String etat) {}
+
+
+    private static String labelOf(Materiel m) {
+        StringBuilder sb = new StringBuilder();
+        if (m.getMarque() != null && !m.getMarque().isBlank()) sb.append(m.getMarque());
+        if (m.getModele() != null && !m.getModele().isBlank()) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(m.getModele());
+        }
+        if (sb.length() == 0 && m.getType() != null && !m.getType().isBlank()) sb.append(m.getType());
+        if (sb.length() == 0) sb.append("Équipement #").append(m.getId());
+        return sb.toString();
+    }
+
+    // ====== CRUD الأساسي ======
+
     @GetMapping
     public ResponseEntity<?> list() {
         var list = materielRepository.findAll().stream().map(MaterielMapper::toDTO).toList();
@@ -34,7 +51,8 @@ public class MaterielController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable Long id) {
-        Materiel m = materielRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Materiel not found"));
+        Materiel m = materielRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Materiel not found"));
         return ResponseEntity.ok(MaterielMapper.toDTO(m));
     }
 
@@ -46,14 +64,11 @@ public class MaterielController {
         m.setModele(req.modele());
         m.setEtat(req.etat());
 
-        // رابط utilisateur (اختياري)
         if (req.utilisateurId() != null) {
             Utilisateur u = utilisateurRepository.findById(req.utilisateurId())
                     .orElseThrow(() -> new NoSuchElementException("Utilisateur not found"));
             m.setUtilisateur(u);
         }
-
-        // رابط fournisseur (اختياري)
         if (req.fournisseurId() != null) {
             Fournisseur f = fournisseurRepository.findById(req.fournisseurId())
                     .orElseThrow(() -> new NoSuchElementException("Fournisseur not found"));
@@ -66,7 +81,8 @@ public class MaterielController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MaterielCreateUpdateDTO req) {
-        Materiel m = materielRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Materiel not found"));
+        Materiel m = materielRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Materiel not found"));
 
         if (req.type() != null)   m.setType(req.type());
         if (req.marque() != null) m.setMarque(req.marque());
@@ -77,10 +93,7 @@ public class MaterielController {
             Utilisateur u = utilisateurRepository.findById(req.utilisateurId())
                     .orElseThrow(() -> new NoSuchElementException("Utilisateur not found"));
             m.setUtilisateur(u);
-        } else if (req.utilisateurId() == null) {
-            // ما تبدّلش الربط إذا ما تبعتيش id؛ إلا بغيت تحيد الربط دير -1 ولا boolean آخر فـ DTO
         }
-
         if (req.fournisseurId() != null) {
             Fournisseur f = fournisseurRepository.findById(req.fournisseurId())
                     .orElseThrow(() -> new NoSuchElementException("Fournisseur not found"));
@@ -100,12 +113,39 @@ public class MaterielController {
         return ResponseEntity.noContent().build(); // 204
     }
 
-    // ترجع 404 بدل forward لـ /error
+
+
+
+    @GetMapping("/options")
+    public ResponseEntity<?> options() {
+        var list = materielRepository.findAll().stream()
+                .map(m -> new MaterielOptionDTO(m.getId(), labelOf(m), m.getEtat()))
+                .toList();
+        return ResponseEntity.ok(list);
+    }
+
+
+    @PatchMapping("/{id}/etat")
+    public ResponseEntity<?> updateEtat(@PathVariable Long id, @RequestBody MaterielEtatDTO req) {
+        if (req == null || req.etat() == null || req.etat().isBlank()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", "etat is required"));
+        }
+        Materiel m = materielRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Materiel not found"));
+        m.setEtat(req.etat());
+        Materiel saved = materielRepository.save(m);
+        return ResponseEntity.ok(MaterielMapper.toDTO(saved));
+    }
+
+    // ====== Error Handlers ======
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> notFound(NoSuchElementException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                java.util.Map.of("error", ex.getMessage())
-        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(java.util.Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> badRequest(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", ex.getMessage()));
     }
 }
-

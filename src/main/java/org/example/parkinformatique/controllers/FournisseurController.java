@@ -38,10 +38,7 @@ public class FournisseurController {
         return ResponseEntity.ok(service.get(id));
     }
 
-    /* LIST
-       - إذا بَعَثتي page & size → Page
-       - إذا لا → List كاملة
-     */
+
     @GetMapping
     public Object list(@RequestParam(required = false) Integer page,
                        @RequestParam(required = false) Integer size) {
