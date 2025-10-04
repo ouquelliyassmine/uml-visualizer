@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Apollon
 
 [![GitHub Actions Status](https://github.com/ls1intum/Apollon/workflows/Build/badge.svg)](https://github.com/ls1intum/Apollon/actions?query=branch%3Adevelop+workflow%3ABuild)
@@ -163,3 +164,7 @@ npm run docs:watch
 ```
 
 The docs will be served on `localhost:8088`. This script will also watch for changes in the docs and rebuild them automatically.
+=======
+# uml-visualizer
+Application web pour concevoir et manipuler des diagrammes UML (Use Case, Class, Sequence…) de façon visuelle et interactive. Export PNG/SVG, sauvegarde JSON, glisser-déposer, multi-thèmes.
+>>>>>>> c7bf4a7e26717f20bd3705f06db4e37b37315a02
