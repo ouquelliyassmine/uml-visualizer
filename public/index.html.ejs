@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>DiagramTool</title>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="topbar-brand logo-container float-left">
+      <img class="logo-image" src="c:\Users\Youbitech\Downloads\DALL·E 2024-12-17 13.49.39 - A sleek, stylish, and modern UML class diagram logo design. It should feature interconnected boxes or rectangles representing classes, with elegant li.webp" alt="Logo" />
+      <span>&nbsp;&nbsp;&nbsp;</span>
+      <span class="topbar-title">DiagramTool</span>&nbsp;&nbsp;&nbsp;<span class="topbar-version">
+        <%=htmlWebpackPlugin.options.version%>
+      </span>
+    </a>
+  </header>
+  <div class="wrapper">
+    <aside class="sidebar-menu">
+      <section>
+        <h3 class="section-title">Diagram Selection</h3>
+        <div class="dropdown-container">
+          <select name="diagram-type" data-cy="select-diagram" onchange="diagramTool.onDiagramChange(event)">
+            <option value="ClassDiagram">Class Diagram</option>
+            <option value="ObjectDiagram">Object Diagram</option>
+            <option value="ActivityDiagram">Activity Diagram</option>
+            <option value="UseCaseDiagram">Use Case Diagram</option>
+            <option value="CommunicationDiagram">Communication Diagram</option>
+            <option value="ComponentDiagram">Component Diagram</option>
+            <option value="DeploymentDiagram">Deployment Diagram</option>
+            <option value="PetriNet">Petri Net</option>
+            <option value="ReachabilityGraph">Reachability Graph</option>
+            <option value="SyntaxTree">Syntax Tree</option>
+            <option value="Flowchart">Flowchart</option>
+            <option value="BPMN">BPMN (beta)</option>
+          </select>
+        </div>
+      </section>
+      <section>
+        <h3 class="section-title">Language Selection</h3>
+        <div class="dropdown-container">
+          <select name="language" onchange="diagramTool.onLanguageChange(event)">
+            <option value="en">English</option>
+            <option value="de">German</option>
+          </select>
+        </div>
+      </section>
+      <section>
+        <h3 class="section-title">Mode Selection</h3>
+        <div class="dropdown-container">
+          <select name="editor-mode" onchange="diagramTool.onModeChange(event)">
+            <option value="Exporting">Exporting</option>
+            <option value="Modeling">Modeling</option>
+            <option value="Reviewing">Reviewing</option>
+          </select>
+        </div>
+        <label>
+          <input class="checkbox" type="checkbox" name="readonly" onchange="diagramTool.toggleReadOnly(event)" />
+          Read-Only Mode
+        </label>
+      </section>
+      <section>
+        <h3 class="section-title">Export Options</h3>
+        <div class="button-group">
+          <button onclick="diagramTool.exportAll()">Export All</button>
+          <button onclick="diagramTool.exportIncluded()">Export Included</button>
+          <button onclick="diagramTool.exportExcluded()">Export Excluded</button>
+        </div>
+      </section>
+      <section>
+        <h3 class="section-title">State Management</h3>
+        <div class="button-group">
+          <button onclick="diagramTool.saveState(event)">Save</button>
+          <button onclick="diagramTool.resetState(event)">Reset</button>
+        </div>
+      </section>
+      <section>
+        <h3 class="section-title">Theme Options</h3>
+        <div class="button-group">
+          <button id="theme-light-button" onclick="diagramTool.setTheme('light')" class="selected">Light</button>
+          <button id="theme-dark-button" onclick="diagramTool.setTheme('dark')">Dark</button>
+        </div>
+      </section>
+    </aside>
+    <div class="main-container">
+      <main id="diagram-editor"></main>
+    </div>
+  </div>
+</body>
+
+</html>
